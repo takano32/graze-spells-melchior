@@ -1,3 +1,8 @@
+---
+name: graze-spells-web
+description: Use when building or changing the Graze Spells Melchior Vite React web app, game loop, input capture, canvas rendering, HUD, and debug UI.
+---
+
 # Web Skill
 
 ## Web app

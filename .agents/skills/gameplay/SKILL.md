@@ -1,3 +1,8 @@
+---
+name: graze-spells-gameplay
+description: Use when designing or implementing Graze Spells Melchior dodge-first gameplay, graze detection, bullet patterns, scoring, debug visuals, and readable survival mechanics.
+---
+
 # Gameplay Skill
 
 ## Design pillar

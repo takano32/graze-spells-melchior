@@ -1,3 +1,8 @@
+---
+name: graze-spells-theme
+description: Use when choosing Graze Spells Melchior thematic language, original names, trilogy structure, and boundaries around external inspiration.
+---
+
 # Theme Skill
 
 ## Thematic direction

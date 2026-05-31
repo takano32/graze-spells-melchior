@@ -1,3 +1,8 @@
+---
+name: graze-spells-verification
+description: Use when verifying Graze Spells Melchior changes, choosing relevant pnpm checks, and keeping implementation steps aligned with the playable prototype.
+---
+
 # Verification Skill
 
 ## Before finishing code changes

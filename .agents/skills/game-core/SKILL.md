@@ -1,3 +1,8 @@
+---
+name: graze-spells-game-core
+description: Use when implementing Graze Spells Melchior platform-independent TypeScript simulation, world updates, game state, spells, collision, grazing, scoring, and input abstractions.
+---
+
 # Game Core Skill
 
 ## Suggested modules

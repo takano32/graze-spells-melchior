@@ -1,3 +1,8 @@
+---
+name: graze-spells-architecture
+description: Use when designing or changing Graze Spells Melchior package boundaries, game-core APIs, platform independence, and shared module responsibilities.
+---
+
 # Architecture Skill
 
 ## Core rule

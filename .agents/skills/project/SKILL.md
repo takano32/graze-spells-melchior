@@ -1,3 +1,8 @@
+---
+name: graze-spells-project
+description: Use when working on Graze Spells Melchior project identity, product direction, milestone scope, naming, and core project constraints.
+---
+
 # Project Skill
 
 ## Identity

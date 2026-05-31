@@ -1,3 +1,8 @@
+---
+name: graze-spells-workspace
+description: Use when working with the Graze Spells Melchior pnpm workspace, package layout, dependency commands, and repository structure.
+---
+
 # Workspace Skill
 
 ## Package manager

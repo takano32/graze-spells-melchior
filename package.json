@@ -1,0 +1,9 @@
+{
+  "name": "graze-spells-melchior",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter @graze-spells/web dev",
+    "build:web": "pnpm --filter @graze-spells/web build",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

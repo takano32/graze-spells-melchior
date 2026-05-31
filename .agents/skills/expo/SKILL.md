@@ -1,3 +1,8 @@
+---
+name: graze-spells-expo
+description: Use when planning future Expo mobile support for Graze Spells Melchior while keeping Expo, React Native, and platform APIs out of game-core.
+---
+
 # Expo Skill
 
 ## Expo status
