@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: Web checks
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Detect Node project
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f package.json ]; then
+            echo "has_package_json=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_package_json=false" >> "$GITHUB_OUTPUT"
+            echo "No package.json yet; skipping Node/pnpm checks."
+          fi
+
+      - name: Setup pnpm
+        if: steps.detect.outputs.has_package_json == 'true'
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - name: Setup Node.js
+        if: steps.detect.outputs.has_package_json == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        if: steps.detect.outputs.has_package_json == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install --no-frozen-lockfile
+          fi
+
+      - name: Typecheck
+        if: steps.detect.outputs.has_package_json == 'true'
+        run: pnpm typecheck
+
+      - name: Build web
+        if: steps.detect.outputs.has_package_json == 'true'
+        run: pnpm build:web

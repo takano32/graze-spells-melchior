@@ -1,0 +1,85 @@
+name: Agents
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-agents:
+    name: Verify agent documents
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Verify required files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f README.md
+          test -f AGENTS.md
+          test -f CLAUDE.md
+
+          test -f .agents/README.md
+          test -f .agents/AGENTS.md
+          test -f .agents/CLAUDE.md
+          test -f .agents/SKILL.md
+
+          test -f .agents/skills/project/SKILL.md
+          test -f .agents/skills/workspace/SKILL.md
+          test -f .agents/skills/architecture/SKILL.md
+          test -f .agents/skills/game-core/SKILL.md
+          test -f .agents/skills/gameplay/SKILL.md
+          test -f .agents/skills/web/SKILL.md
+          test -f .agents/skills/expo/SKILL.md
+          test -f .agents/skills/theme/SKILL.md
+          test -f .agents/skills/verification/SKILL.md
+
+          test -f .agents/docs/README.md
+          test -f .agents/docs/PROJECT_BRIEF.md
+          test -f .agents/docs/SETUP.md
+          test -f .agents/docs/DEVELOPMENT.md
+          test -f .agents/docs/ARCHITECTURE.md
+          test -f .agents/docs/GAME_DESIGN.md
+          test -f .agents/docs/ROADMAP.md
+          test -f .agents/docs/CONTRIBUTING.md
+          test -f .agents/docs/AGENT_GUIDE.md
+          test -f .agents/docs/VERIFICATION.md
+          test -f .agents/docs/AUDIT.md
+
+      - name: Verify bridge imports
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fx '@.agents/AGENTS.md' AGENTS.md
+          grep -Fx '@.agents/CLAUDE.md' CLAUDE.md
+
+          grep -Fx '@AGENTS.md' .agents/CLAUDE.md
+          grep -Fx '@SKILL.md' .agents/CLAUDE.md
+
+          grep -Fx '@skills/project/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/workspace/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/architecture/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/game-core/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/gameplay/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/web/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/expo/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/theme/SKILL.md' .agents/SKILL.md
+          grep -Fx '@skills/verification/SKILL.md' .agents/SKILL.md
+
+      - name: Verify package-manager policy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -R "Use pnpm" README.md .agents
+          grep -R "Do not introduce Yarn" .agents
