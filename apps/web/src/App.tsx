@@ -6,12 +6,12 @@ import { HUD } from "./components/HUD";
 const FIELD_W = 480;
 const FIELD_H = 640;
 
-type DisplayState = { score: number; grazeCount: number; status: string };
+type DisplayState = { score: number; grazeCount: number; status: string; intensity: number };
 
 export function App() {
   const worldRef = useRef<WorldState>(createWorld(FIELD_W, FIELD_H));
   const inputRef = useRef<InputState>(createInputState());
-  const [display, setDisplay] = useState<DisplayState>({ score: 0, grazeCount: 0, status: "playing" });
+  const [display, setDisplay] = useState<DisplayState>({ score: 0, grazeCount: 0, status: "playing", intensity: 0 });
   const [debug, setDebug] = useState(false);
 
   const reset = useCallback(() => {
@@ -78,6 +78,7 @@ export function App() {
       <HUD
         score={display.score}
         grazeCount={display.grazeCount}
+        intensity={display.intensity}
         spellName={spellName}
         debug={debug}
         onDebugToggle={() => setDebug((v) => !v)}

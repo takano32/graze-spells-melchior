@@ -1,6 +1,7 @@
 type Props = {
   score: number;
   grazeCount: number;
+  intensity: number;
   spellName: string;
   debug: boolean;
   onDebugToggle: () => void;
@@ -36,12 +37,19 @@ const S = {
   } as React.CSSProperties,
 };
 
-export function HUD({ score, grazeCount, spellName, debug, onDebugToggle, onReset }: Props) {
+export function HUD({ score, grazeCount, intensity, spellName, debug, onDebugToggle, onReset }: Props) {
   return (
     <div style={S.hud}>
       <div style={S.row}>
         <span style={S.score}>Score: {score.toLocaleString()}</span>
-        <span style={S.graze}>×{grazeCount} graze</span>
+        <div>
+          {debug && (
+            <span style={{ ...S.graze, marginRight: "16px", fontSize: "12px", opacity: 0.7 }}>
+              intensity: {intensity.toFixed(1)}
+            </span>
+          )}
+          <span style={S.graze}>×{grazeCount} graze</span>
+        </div>
       </div>
       <div style={S.row}>
         <span style={S.spell}>{spellName}</span>

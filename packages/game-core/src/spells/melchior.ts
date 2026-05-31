@@ -6,6 +6,7 @@ export const MELCHIOR_SPELL: SpellState = {
   nextBurstTime: 0.5,
   burstIndex: 0,
   startTime: 0,
+  intensity: 0,
 };
 
 export function spawnGrowingBurst(
@@ -15,15 +16,16 @@ export function spawnGrowingBurst(
   playerPos: Vec2,
   currentTime: number
 ): { bullets: BulletState[]; spell: SpellState; nextId: number } {
-  const elapsed = currentTime - spell.startTime;
+  const intensity = spell.intensity;
   const bullets: BulletState[] = [];
   let currentId = nextId;
 
   // 1. Core Rotating Pattern (The "Root")
   // Gradually increases in rotation speed and bullet count
-  const rotationSpeed = Math.PI / 15 + (elapsed * 0.01); // Slower rotation
-  const ringCount = Math.floor(6 + Math.min(elapsed * 0.25, 8)); // Starts at 6, grows to 14
-  const ringSpeed = 95 + (elapsed * 1.2); // Slower base and growth
+  const rotationSpeed = Math.PI / 15 + (intensity * 0.02); // Faster rotation growth
+  // Complexity scaling: Increase number of bullets per ring more aggressively
+  const ringCount = Math.floor(6 + Math.min(intensity * 0.6, 24)); 
+  const ringSpeed = 95 + (intensity * 2.5); 
   
   const emitterX = fieldWidth / 2;
   const emitterY = 64;
@@ -39,35 +41,8 @@ export function spawnGrowingBurst(
     });
   }
 
-  // 2. Secondary Aimed Pattern (The "Growth")
-  // Appears after 15 seconds, and its frequency/count increases very slowly
-  if (elapsed > 15) {
-    const sideMargin = 80;
-    const sideY = 120;
-    const emitters = [vec2(sideMargin, sideY), vec2(fieldWidth - sideMargin, sideY)];
-    
-    // Aimed bullets count grows from 1 to 2
-    const aimedCount = Math.floor(1 + Math.min((elapsed - 15) * 0.1, 1));
-    const aimedSpeed = 120 + (elapsed * 1.0);
-
-    for (const emitter of emitters) {
-      const toPlayer = normalize(add(playerPos, scale(emitter, -1)));
-      const baseAngle = Math.atan2(toPlayer.y, toPlayer.x);
-
-      for (let i = 0; i < aimedCount; i++) {
-        const spread = aimedCount > 1 ? (i - (aimedCount - 1) / 2) * 0.25 : 0;
-        bullets.push({
-          id: `b${currentId++}`,
-          position: { ...emitter },
-          velocity: scale(fromAngle(baseAngle + spread), aimedSpeed),
-          radius: 8,
-        });
-      }
-    }
-  }
-
-  // Next burst interval decreases more slowly (relaxed tempo)
-  const nextInterval = Math.max(0.9 - (elapsed * 0.01), 0.55);
+  // Next burst interval decreases faster based on intensity
+  const nextInterval = Math.max(0.9 - (intensity * 0.03), 0.35); // Even faster tempo growth and lower cap (0.4 -> 0.35)
 
   return {
     bullets,

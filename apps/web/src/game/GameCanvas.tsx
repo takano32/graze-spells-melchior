@@ -3,7 +3,7 @@ import { Application } from "pixi.js";
 import { updateWorld, type WorldState, type InputState } from "@graze-spells/game-core";
 import { createPixiRenderer } from "./pixiRenderer";
 
-type FrameInfo = { score: number; grazeCount: number; status: string };
+type FrameInfo = { score: number; grazeCount: number; status: string; intensity: number };
 
 type Props = {
   worldRef: MutableRefObject<WorldState>;
@@ -48,7 +48,8 @@ export function GameCanvas({ worldRef, inputRef, onFrame }: Props) {
         worldRef.current = updateWorld(worldRef.current, inputRef.current, dt);
         renderer.update(worldRef.current, inputRef.current, dt);
         const { score, grazeCount } = worldRef.current.score;
-        onFrameRef.current({ score, grazeCount, status: worldRef.current.status });
+        const intensity = worldRef.current.spell.intensity;
+        onFrameRef.current({ score, grazeCount, status: worldRef.current.status, intensity });
       });
     })();
 

@@ -42,6 +42,12 @@ export function updateWorld(world: WorldState, input: InputState, dt: number): W
 
   const { player: grazedPlayer, score } = checkGraze(player, bullets, world.score);
 
+  // Evolve spell intensity: +0.6 per graze, +0.4 per second.
+  // Increased growth rates for a more noticeable challenge progression.
+  const grazeDiff = score.grazeCount - world.score.grazeCount;
+  const intensityGrowth = (grazeDiff * 0.6) + (dt * 0.4);
+  spell = { ...spell, intensity: spell.intensity + intensityGrowth };
+
   const activeBullets = bullets.filter(
     (b) => !isOffScreen(b.position.x, b.position.y, world.fieldWidth, world.fieldHeight)
   );
