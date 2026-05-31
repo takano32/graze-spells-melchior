@@ -24,6 +24,7 @@ export type SpellState = {
   name: string;
   nextBurstTime: number;
   burstIndex: number;
+  startTime: number;
 };
 
 export type WorldState = {

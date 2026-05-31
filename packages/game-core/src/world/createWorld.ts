@@ -1,5 +1,5 @@
 import type { WorldState } from "../types";
-import { MELCHIOR_FIRST_CHOIR } from "../spells/melchior";
+import { MELCHIOR_SPELL } from "../spells/melchior";
 
 export function createWorld(fieldWidth: number, fieldHeight: number): WorldState {
   return {
@@ -15,7 +15,7 @@ export function createWorld(fieldWidth: number, fieldHeight: number): WorldState
     },
     bullets: [],
     score: { score: 0, grazeCount: 0 },
-    spell: { ...MELCHIOR_FIRST_CHOIR },
+    spell: { ...MELCHIOR_SPELL },
     status: "playing",
     nextBulletId: 0,
   };

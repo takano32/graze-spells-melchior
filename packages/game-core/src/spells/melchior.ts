@@ -1,46 +1,81 @@
-import type { BulletState, SpellState } from "../types";
-import { fromAngle, scale } from "../math/vector";
+import type { BulletState, SpellState, Vec2 } from "../types";
+import { fromAngle, scale, normalize, add, vec2 } from "../math/vector";
 
-// Melchior Opening: First Choir
-// Rotating ring bursts from the top — 12 bullets per burst, slow rotation each wave
-const BURST_INTERVAL = 0.7;
-const BULLET_COUNT = 12;
-const BULLET_SPEED = 125;
-const ROTATION_PER_BURST = Math.PI / 12; // 15° per burst
-
-export const MELCHIOR_FIRST_CHOIR: SpellState = {
-  name: "Melchior Opening: First Choir",
-  nextBurstTime: 0.6,
+export const MELCHIOR_SPELL: SpellState = {
+  name: "Melchior: Infinite Choir",
+  nextBurstTime: 0.5,
   burstIndex: 0,
+  startTime: 0,
 };
 
-export function spawnFirstChoirBurst(
+export function spawnGrowingBurst(
   spell: SpellState,
   nextId: number,
-  fieldWidth: number
+  fieldWidth: number,
+  playerPos: Vec2,
+  currentTime: number
 ): { bullets: BulletState[]; spell: SpellState; nextId: number } {
+  const elapsed = currentTime - spell.startTime;
+  const bullets: BulletState[] = [];
+  let currentId = nextId;
+
+  // 1. Core Rotating Pattern (The "Root")
+  // Gradually increases in rotation speed and bullet count
+  const rotationSpeed = Math.PI / 15 + (elapsed * 0.01); // Slower rotation
+  const ringCount = Math.floor(6 + Math.min(elapsed * 0.25, 8)); // Starts at 6, grows to 14
+  const ringSpeed = 95 + (elapsed * 1.2); // Slower base and growth
+  
   const emitterX = fieldWidth / 2;
   const emitterY = 64;
-  const baseAngle = spell.burstIndex * ROTATION_PER_BURST;
+  const baseAngle = spell.burstIndex * rotationSpeed;
 
-  const bullets: BulletState[] = Array.from({ length: BULLET_COUNT }, (_, i) => {
-    const angle = baseAngle + (i / BULLET_COUNT) * Math.PI * 2;
-    const velocity = scale(fromAngle(angle), BULLET_SPEED);
-    return {
-      id: `b${nextId + i}`,
+  for (let i = 0; i < ringCount; i++) {
+    const angle = baseAngle + (i / ringCount) * Math.PI * 2;
+    bullets.push({
+      id: `b${currentId++}`,
       position: { x: emitterX, y: emitterY },
-      velocity,
+      velocity: scale(fromAngle(angle), ringSpeed),
       radius: 7,
-    };
-  });
+    });
+  }
+
+  // 2. Secondary Aimed Pattern (The "Growth")
+  // Appears after 15 seconds, and its frequency/count increases very slowly
+  if (elapsed > 15) {
+    const sideMargin = 80;
+    const sideY = 120;
+    const emitters = [vec2(sideMargin, sideY), vec2(fieldWidth - sideMargin, sideY)];
+    
+    // Aimed bullets count grows from 1 to 2
+    const aimedCount = Math.floor(1 + Math.min((elapsed - 15) * 0.1, 1));
+    const aimedSpeed = 120 + (elapsed * 1.0);
+
+    for (const emitter of emitters) {
+      const toPlayer = normalize(add(playerPos, scale(emitter, -1)));
+      const baseAngle = Math.atan2(toPlayer.y, toPlayer.x);
+
+      for (let i = 0; i < aimedCount; i++) {
+        const spread = aimedCount > 1 ? (i - (aimedCount - 1) / 2) * 0.25 : 0;
+        bullets.push({
+          id: `b${currentId++}`,
+          position: { ...emitter },
+          velocity: scale(fromAngle(baseAngle + spread), aimedSpeed),
+          radius: 8,
+        });
+      }
+    }
+  }
+
+  // Next burst interval decreases more slowly (relaxed tempo)
+  const nextInterval = Math.max(0.9 - (elapsed * 0.01), 0.55);
 
   return {
     bullets,
     spell: {
       ...spell,
-      nextBurstTime: spell.nextBurstTime + BURST_INTERVAL,
+      nextBurstTime: currentTime + nextInterval,
       burstIndex: spell.burstIndex + 1,
     },
-    nextId: nextId + BULLET_COUNT,
+    nextId: currentId,
   };
 }

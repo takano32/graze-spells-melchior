@@ -2,7 +2,7 @@ import type { WorldState, InputState } from "../types";
 import { movePlayer } from "../player/movement";
 import { anyCollision } from "../collision/hitTest";
 import { checkGraze } from "../collision/grazeTest";
-import { spawnFirstChoirBurst } from "../spells/melchior";
+import { spawnGrowingBurst } from "../spells/melchior";
 
 const OFFSCREEN_MARGIN = 40;
 
@@ -28,8 +28,9 @@ export function updateWorld(world: WorldState, input: InputState, dt: number): W
   let spell = world.spell;
   let nextBulletId = world.nextBulletId;
 
+  // Handle burst spawning with growing complexity
   if (newTime >= spell.nextBurstTime) {
-    const result = spawnFirstChoirBurst(spell, nextBulletId, world.fieldWidth);
+    const result = spawnGrowingBurst(spell, nextBulletId, world.fieldWidth, player.position, newTime);
     bullets = [...bullets, ...result.bullets];
     spell = result.spell;
     nextBulletId = result.nextId;
